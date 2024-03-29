@@ -56,8 +56,8 @@ for(let i=0; i<x; i++){
 */
 
 function compute(i, x, y){
-	i = 255/ditherMap.length/ditherMap[0].length +
-		i*(ditherMap.length*ditherMap[0].length-2)/
+	i = 3*255/ditherMap.length/ditherMap[0].length +
+		i*(ditherMap.length*ditherMap[0].length-4)/
 		(ditherMap.length*ditherMap[0].length);
 	if(i*ditherMap.length*ditherMap[0].length/255 >
 		ditherMap[x%ditherMap.length][y%ditherMap[0].length]) return 255;
@@ -80,7 +80,7 @@ function grayscaleDitherPixel(i, x, y){
 function tonalDitherPixel(i, x, y){
 	let avg = (pixels[i] + pixels[i+1] + pixels[i+2])/3;
 	avg = compute(avg, x, y);
-	let undertone = [0.1, 0.1, 0.3],
-		overtone = [1, 0.95, 0.95];
+	let undertone = [0, 0, 0.5],
+		overtone = [1, 0.9, 0.9];
 	for(let j=0; j<3; j++) pixels[i+j] = 255*(undertone[j]+avg/255*(overtone[j]-undertone[j]));
 }
