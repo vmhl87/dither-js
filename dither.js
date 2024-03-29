@@ -24,10 +24,14 @@ function dither(){
 }
 
 let ditherMap = [
-	[0, 11, 3, 8],
-	[15, 4, 12, 7],
-	[2, 9, 1, 10],
-	[13, 6, 14, 5]
+	[0, 32, 8, 40, 2, 34, 10, 42],
+	[48, 16, 56, 24, 50, 18, 58, 26],
+	[12, 44, 4, 36, 14, 46, 6, 38],
+	[60, 28, 52, 20, 62, 30, 54, 22],
+	[3, 35, 11, 43, 1, 33, 9, 41],
+	[51, 19, 59, 27, 49, 17, 57, 25],
+	[15, 47, 7, 39, 13, 45, 5, 37],
+	[63, 31, 55, 23, 61, 29, 53, 21]
 ]
 
 /*
@@ -56,24 +60,22 @@ for(let i=0; i<x; i++){
 */
 
 function compute(i, x, y){
-	i = 3*255/ditherMap.length/ditherMap[0].length +
-		i*(ditherMap.length*ditherMap[0].length-4)/
-		(ditherMap.length*ditherMap[0].length);
+	i = 4*255/16 + i*11/16;
 	if(i*ditherMap.length*ditherMap[0].length/255 >
-		ditherMap[x%ditherMap.length][y%ditherMap[0].length]) return 255;
+		ditherMap[x%ditherMap.length][y%ditherMap[0].length]) return 1;
 	return 0;
 }
 
 function colorDitherPixel(i, x, y){
 	for(let j=0; j<3; j++){
-		pixels[i+j] = compute(pixels[i+j], x, y);
-		x += 37; y += 97;
+		pixels[i+j] = 255 * compute(pixels[i+j], x, y);
+		x += 5; y += 2;
 	}
 }
 
 function grayscaleDitherPixel(i, x, y){
 	let avg = (pixels[i] + pixels[i+1] + pixels[i+2])/3;
-	avg = compute(avg, x, y);
+	avg = 255 * compute(avg, x, y);
 	for(let j=0; j<3; j++) pixels[i+j] = avg;
 }
 
@@ -82,5 +84,5 @@ function tonalDitherPixel(i, x, y){
 	avg = compute(avg, x, y);
 	let undertone = [0, 0, 0.5],
 		overtone = [1, 0.9, 0.9];
-	for(let j=0; j<3; j++) pixels[i+j] = 255*(undertone[j]+avg/255*(overtone[j]-undertone[j]));
+	for(let j=0; j<3; j++) pixels[i+j] = 255*(undertone[j]+avg*(overtone[j]-undertone[j]));
 }
